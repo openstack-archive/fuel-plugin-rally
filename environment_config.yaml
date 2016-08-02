@@ -1,11 +1,11 @@
 attributes:
   metadata:
-    # Settings group can be one of "general", "security", "compute", "network",
-    # "storage", "logging", "openstack_services" and "other".
-    group: 'other'
-  fuel-plugin-rally_text:
-    value: 'Set default value'
-    label: 'Text field'
-    description: 'Description for text field'
-    weight: 25
+    label: "Rally benchmarking tool"
+    weight: 90
+
+  rally_configuration:
+    value: 'Some config'
+    label: 'Repository for example'
+    description: 'Configurable parameter'
+    weight: 5
     type: "text"
