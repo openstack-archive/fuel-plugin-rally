@@ -37,8 +37,6 @@
     puppet_manifest: "puppet/manifests/rally_hiera_override.pp"
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 120
-  reexecute_on:
-    - deploy_changes
 
 - id: puppet-demo
   type: puppet
@@ -50,5 +48,3 @@
     puppet_manifest: puppet/manifests/demo.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
-  reexecute_on:
-    - deploy_changes
