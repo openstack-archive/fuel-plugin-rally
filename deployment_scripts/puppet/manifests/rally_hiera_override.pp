@@ -20,17 +20,26 @@ $network_metadata = hiera_hash('network_metadata')
 prepare_network_config($network_scheme)
 
 $rally = hiera_hash('fuel-plugin-rally', undef)
+
+if ($rally['repository_type'] == 'default')  {
+  $repository_url = 'https://github.com/openstack/rally'
+  $repository_tag = $rally['repository_tag']
+} else {
+  $repository_url = $rally['repository_custom']
+  $repository_tag = $rally['repository_custom_tag']
+}
+
 $management_ip = get_network_role_property('management', 'ipaddr')
 
 $hiera_dir = '/etc/hiera/override'
 $plugin_name = 'rally'
 $plugin_yaml = "${plugin_name}.yaml"
 
-
 $calculated_content = inline_template('
 ---
-rally::rally_configuration: <%= @rally["rally_configuration"] %>
 rally::listen_address: <%= @management_ip %>
+rally::repository_url: <%= @repository_url %>
+rally::repository_tag: <%= @repository_tag %>
 ')
 
 ###################

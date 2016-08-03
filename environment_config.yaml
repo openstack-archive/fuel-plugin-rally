@@ -3,9 +3,66 @@ attributes:
     label: "Rally benchmarking tool"
     weight: 90
 
-  rally_configuration:
-    value: 'Some config'
-    label: 'Repository for example'
-    description: 'Configurable parameter'
-    weight: 5
+  # Repository
+  repository_type:
+    type: "radio"
+    weight: 40
+    value: "default"
+    label: "Choose repository source"
+    values:
+      - data: "default"
+        label: "Official openstack/rally repository"
+        description: "Released version of rally benchmarking tool"
+      - data: "custom"
+        label: "Custom repository"
+        description: "Specify repository url"
+    
+  repository_tag:
+    type: "select"
+    weight: 50
+    value: "master"
+    label: "Select master or tag"
+    description: "Applicable for default repository only"
+    values:
+      - data: "master"
+        label: "master"
+      - data: "0.5.0"
+        label: "0.5.0"
+      - data: "0.4.0"
+        label: "0.4.0"
+      - data: "0.3.3"
+        label: "0.3.3"
+      - data: "0.3.2"
+        label: "0.3.2"
+      - data: "0.3.1"
+        label: "0.3.1"
+      - data: "0.3.0"
+        label: "0.3.0"
+      - data: "0.2.0"
+        label: "0.2.0"
+    restrictions:
+      - condition: "settings:fuel-plugin-rally.repository_type.value == 'custom'"
+        action: hide
+
+  repository_custom:
     type: "text"
+    weight: 50
+    value: ""
+    label: "Repository path"
+    description: "Specify git repository path"
+    regex: 
+      source: '^(ssh|git|http(s)|git).*$'
+      error: 'Use http(s)/ssh/git url format'
+    restrictions:
+      - condition: "settings:fuel-plugin-rally.repository_type.value == 'default'"
+        action: hide
+
+  repository_custom_tag:
+    type: "text"
+    weight: 60
+    value: "master"
+    label: "Repository tag"
+    description: "Leave master or specify custom tag"
+    restrictions:
+      - condition: "settings:fuel-plugin-rally.repository_type.value == 'default'"
+        action: hide
