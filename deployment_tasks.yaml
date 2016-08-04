@@ -14,8 +14,8 @@
     - logging
     - netconfig
     - hosts
-    - rally-hiera
-    - puppet-demo
+    - rally-hiera-override
+    - rally-deploy
   requires: [deploy_start]
   required_for: [deploy_end]
   parameters:
@@ -28,23 +28,23 @@
 
 # This task needs to be reexecuted to adapt the configuration parameters which
 # depend on the number of nodes in the cluster
-- id: rally-hiera
+- id: rally-hiera-override
   type: puppet
   version: 2.0.0
   requires: [netconfig]
   required_for: [deploy_end]
   parameters:
-    puppet_manifest: "puppet/manifests/rally_hiera_override.pp"
+    puppet_manifest: "puppet/manifests/hiera_override.pp"
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 120
 
-- id: puppet-demo
+- id: rally-deploy
   type: puppet
   version: 2.0.0
   role: [rally]
   requires: [netconfig]
   required_for: [deploy_end]
   parameters:
-    puppet_manifest: puppet/manifests/demo.pp
+    puppet_manifest: puppet/manifests/deploy.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
