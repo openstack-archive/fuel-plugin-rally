@@ -47,7 +47,7 @@ class rally::install inherits rally {
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
     user    => $rally::rally_user,
     cwd     => $rally::rally_home,
-    timeout => 600,
+    timeout => 500,
     unless  => "test -x ${rally::rally_venv}/bin/rally",
   }
 }
