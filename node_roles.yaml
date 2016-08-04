@@ -2,7 +2,7 @@ rally:
   name: 'Rally'
   description: 'Install Rally'
   has_primary: false
-  public_ip_required: false
+  public_ip_required: true
   weight: 100
   limits:
     max: 1
