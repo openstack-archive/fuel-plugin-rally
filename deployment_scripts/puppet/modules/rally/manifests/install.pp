@@ -1,16 +1,13 @@
-class rally::install (
-  $repository_url = 'https://github.com/openstack/rally',
-  $repository_tag = 'master',
-) {
+class rally::install inherits rally {
 
   $rally_installer = '/tmp/install_rally.sh'
 
   $cmd = "${rally_installer} \
     --yes \
-    --system \
     --no-color \
-    --url ${repository_url} \
-    --branch ${repository_tag}"
+    --target ${rally::rally_venv} \
+    --url ${rally::repository_url} \
+    --branch ${rally::repository_tag}"
 
   file { "${rally_installer}":
     ensure => file,
@@ -35,17 +32,22 @@ class rally::install (
   }
   create_resources(package, $packages, $defaults)
 
+  if $rally::create_user == true and $rally::rally_user != 'root' {
+    user { "${rally::rally_user}":
+      ensure     => present,
+      managehome => true,
+      home       => $rally::rally_home,
+      shell      => '/bin/bash',
+      before     => Exec[$rally_installer],
+    }
+  }
+
   exec { "${rally_installer}":
     command => $cmd,
-    path    => [
-      '/bin',
-      '/sbin',
-      '/usr/bin',
-      '/usr/sbin',
-      '/usr/local/bin',
-      '/usr/local/sbin',
-    ],
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+    user    => $rally::rally_user,
+    cwd     => $rally::rally_home,
     timeout => 600,
-    unless  => "rally --version",
+    unless  => "test -x ${rally::rally_venv}/bin/rally",
   }
 }
