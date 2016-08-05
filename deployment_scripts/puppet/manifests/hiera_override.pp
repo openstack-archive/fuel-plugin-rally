@@ -31,6 +31,7 @@ if $rally_hash {
     true    => 'https',
     default => 'http',
   }
+  $public_hostname = $public_ssl['hostname']
   $public_vip = hiera('public_vip', undef)
   $auth_url = "${proto}://${public_vip}:5000/v2.0"
 
@@ -46,6 +47,8 @@ if $rally_hash {
 rally::repository_url: <%= @repository_url %>
 rally::repository_tag: <%= @repository_tag %>
 rally::auth_url: <%= @auth_url %>
+rally::public_hostname: <%= @public_hostname %>
+rally::public_vip: <%= @public_vip %>
 rally::username: <%= @username %>
 rally::password: <%= @password %>
 rally::tenant_name: <%= @tenant_name %>

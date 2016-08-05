@@ -3,6 +3,11 @@ class rally::config inherits rally {
   $rally_config = "${rally::rally_home}/existing.json"
   $rally_deployment = 'existing'
 
+  host { "${rally::public_hostname}":
+    ensure => present,
+    ip     => $rally::public_vip,
+  }
+
   file { "${rally_config}":
     ensure  => file,
     content => template('rally/existing.json.erb'),

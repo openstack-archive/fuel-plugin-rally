@@ -1,12 +1,14 @@
 class rally (
-  $repository_url = $rally::params::repository_url,
-  $repository_tag = $rally::params::repository_tag,
-  $create_user    = $rally::params::create_user,
-  $rally_user     = $rally::params::rally_user,
-  $auth_url       = $rally::params::auth_url,
-  $username       = $rally::params::usermame,
-  $password       = $rally::params::password,
-  $tenant_name    = $rally::params::tenant_name,
+  $repository_url  = $rally::params::repository_url,
+  $repository_tag  = $rally::params::repository_tag,
+  $create_user     = $rally::params::create_user,
+  $rally_user      = $rally::params::rally_user,
+  $auth_url        = $rally::params::auth_url,
+  $public_hostname = $rally::params::public_hostname,
+  $public_vip      = $rally::params::public_vip,
+  $username        = $rally::params::usermame,
+  $password        = $rally::params::password,
+  $tenant_name     = $rally::params::tenant_name,
 ) inherits rally::params {
 
   $rally_group = $rally_user
