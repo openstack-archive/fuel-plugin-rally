@@ -3,9 +3,12 @@ class rally::config inherits rally {
   $rally_config = "${rally::rally_home}/existing.json"
   $rally_deployment = 'existing'
 
-  host { "${rally::public_hostname}":
+  $rally_hostname = hiera("rally::public_hostname")
+  $rally_vip = hiera("rally::public_vip")
+
+  host { "${rally_hostname}":
     ensure => present,
-    ip     => $rally::public_vip,
+    ip     => $rally_vip,
   }
 
   file { "${rally_config}":

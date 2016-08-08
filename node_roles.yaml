@@ -10,3 +10,5 @@ rally:
   conflicts:
     - compute
     - controller
+    - cinder
+    - ceph-osd

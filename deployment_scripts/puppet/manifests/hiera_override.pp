@@ -54,8 +54,28 @@ rally::password: <%= @password %>
 rally::tenant_name: <%= @tenant_name %>
 ')
 
+  file { "/etc/hiera/plugins":
+    ensure => 'directory',
+  } ->
   file { "${hiera_file}":
     ensure  => file,
     content => $calculated_content,
+  }
+
+  # hiera file changes between 7.0 and 8.0 so we need to handle the override the
+  # different yaml formats via these exec hacks.  It should be noted that the
+  # fuel hiera task will wipe out these this update to the hiera.yaml
+  exec { "${plugin_name}_hiera_override_7.0":
+    command => "sed -i '/  - override\\/plugins/a\\  - plugins\\/${plugin_name}' /etc/hiera.yaml",
+    path    => '/bin:/usr/bin',
+    unless  => "grep -q '^  - plugins/${plugin_name}' /etc/hiera.yaml",
+    onlyif  => 'grep -q "^  - override/plugins" /etc/hiera.yaml'
+  }
+
+  exec { "${plugin_name}_hiera_override_8.0":
+    command => "sed -i '/    - override\\/plugins/a\\    - plugins\\/${plugin_name}' /etc/hiera.yaml",
+    path    => '/bin:/usr/bin',
+    unless  => "grep -q '^    - plugins/${plugin_name}' /etc/hiera.yaml",
+    onlyif  => 'grep -q "^    - override/plugins" /etc/hiera.yaml'
   }
 }

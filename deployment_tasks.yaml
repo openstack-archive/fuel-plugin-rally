@@ -7,8 +7,6 @@
   role: [rally]
   tasks:
     - hiera
-    - setup_repositories
-    - fuel_pkgs
     - globals
     - tools
     - logging
