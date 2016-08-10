@@ -1,13 +1,20 @@
 class rally::config inherits rally {
 
-  $rally_config = "${rally::rally_home}/existing.json"
+  $rally_config = "/etc/rally/deployment/existing.json"
   $rally_deployment = 'existing'
 
-  host { "${rally::public_hostname}":
+  $rally_hostname = hiera("rally::public_hostname")
+  $rally_vip = hiera("rally::public_vip")
+
+  host { "${rally_hostname}":
     ensure => present,
-    ip     => $rally::public_vip,
+    ip     => $rally_vip,
   }
 
+  file {"deployment":
+    ensure  => directory,
+    path    => "/etc/rally/deployment"
+  } ->
   file { "${rally_config}":
     ensure  => file,
     content => template('rally/existing.json.erb'),
@@ -16,9 +23,16 @@ class rally::config inherits rally {
     mode    => '0644',
   }
 
-  $cmd = "${rally::rally_venv}/bin/rally deployment create \
+  $cmd = "/usr/local/bin/rally deployment create \
     --file=${rally_config} \
     --name ${rally_deployment}"
+
+  exec { "pip_packages_upgrade":
+    command => "pip install --upgrade 'python-keystoneclient>=2.0.0'",
+    path    => ["/usr/bin", "/usr/sbin"],
+    timeout => 100,
+    before  => Exec["register_deployment"]
+  }
 
   exec { 'register_deployment':
     command => $cmd,
@@ -27,12 +41,12 @@ class rally::config inherits rally {
       '/sbin',
       '/usr/bin',
       '/usr/sbin',
-      "${rally::rally_venv}/bin",
+      '/usr/local/bin',
     ],
     user    => $rally::rally_user,
     cwd     => $rally::rally_home,
     require => File[$rally_config],
-    unless  => "${rally::rally_venv}/bin/rally deployment show \
+    unless  => "/usr/local/bin/rally deployment show \
       --deployment ${rally_deployment}",
   }
 }

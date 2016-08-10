@@ -5,7 +5,7 @@ class rally::install inherits rally {
   $cmd = "${rally_installer} \
     --yes \
     --no-color \
-    --target ${rally::rally_venv} \
+    --system \
     --url ${rally::repository_url} \
     --branch ${rally::repository_tag}"
 
@@ -32,22 +32,10 @@ class rally::install inherits rally {
   }
   create_resources(package, $packages, $defaults)
 
-  if $rally::create_user == true and $rally::rally_user != 'root' {
-    user { "${rally::rally_user}":
-      ensure     => present,
-      managehome => true,
-      home       => $rally::rally_home,
-      shell      => '/bin/bash',
-      before     => Exec[$rally_installer],
-    }
-  }
-
   exec { "${rally_installer}":
     command => $cmd,
-    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-    user    => $rally::rally_user,
-    cwd     => $rally::rally_home,
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
     timeout => 500,
-    unless  => "test -x ${rally::rally_venv}/bin/rally",
+    unless  => "test -x /usr/local/bin/rally",
   }
 }

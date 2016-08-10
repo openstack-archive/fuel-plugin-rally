@@ -35,7 +35,7 @@ if $rally_hash {
   $public_vip = hiera('public_vip', undef)
   $auth_url = "${proto}://${public_vip}:5000/v2.0"
 
-  $access_hash = hiera_hash('access_hash', undef)
+  $access_hash = hiera_hash('access', undef)
   $username = $access_hash['user']
   $password = $access_hash['password']
   $tenant_name = $access_hash['tenant']
@@ -54,6 +54,9 @@ rally::password: <%= @password %>
 rally::tenant_name: <%= @tenant_name %>
 ')
 
+  file { "/etc/hiera/plugins":
+    ensure => 'directory',
+  } ->
   file { "${hiera_file}":
     ensure  => file,
     content => $calculated_content,
