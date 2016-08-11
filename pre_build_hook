@@ -64,7 +64,3 @@ download deb http://mirrors.kernel.org/ubuntu/pool/main/libe/liberror-perl/liber
     http://mirrors.kernel.org/ubuntu/pool/universe/d/distlib/python-distlib-whl_0.1.8-1ubuntu1_all.deb \
     http://mirrors.kernel.org/ubuntu/pool/universe/p/python-pip/python-pip_1.5.4-1ubuntu4_all.deb \
     http://mirrors.kernel.org/ubuntu/pool/universe/p/python-pip/python-pip-whl_1.5.4-1ubuntu4_all.deb
-
-# Obtain Rally installer
-mkdir -p "${RALLY_INSTALLER_DIR}"
-wget -qO- "${RALLY_INSTALLER_URL}" > "${RALLY_INSTALLER_DIR}"/install_rally.sh

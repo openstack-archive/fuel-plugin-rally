@@ -729,7 +729,7 @@ pip install -i "$BASE_PIP_URL" -U 'pip!=8'
 hash -r
 
 # Install dependencies
-pip install -i "$BASE_PIP_URL" pbr 'tox<=1.6.1'
+pip install -i "$BASE_PIP_URL" 'pbr>=1.0.0' 'tox<=1.6.1'
 # Uninstall possible previous version
 pip uninstall -y rally || true
 # Install rally
