@@ -21,7 +21,7 @@ class rally::install inherits rally {
     ensure => file,
     mode   => '0755',
     source => 'puppet:///modules/rally/requirements.txt',
-    before => Exec["update_requirements"],
+    before => Exec["update_installer_requirements"],
   }
 
   $packages = {
@@ -36,11 +36,16 @@ class rally::install inherits rally {
   }
   $defaults = {
     ensure => installed,
-    before => Exec[$rally_installer],
+    before => Exec["update_installer_requirements"],
   }
   create_resources(package, $packages, $defaults)
 
-  exec {"update_requirements":
+  exec {"update_installer_requirements":
+    command => "pip install 'docutils==0.12' 'MarkupSafe==0.23' 'pbr==1.10.0' pytz",
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
+    timeout => 500,
+  } ->
+  exec {"update_rally_requirements":
     command => "cat $rally_requirements | xargs pip install",
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
     timeout => 500,
@@ -50,7 +55,7 @@ class rally::install inherits rally {
     command => $cmd,
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
     timeout => 500,
-    require => Exec["update_requirements"],
+    require => Exec["update_installer_requirements"],
     unless  => "test -x /usr/local/bin/rally",
   }
 }
