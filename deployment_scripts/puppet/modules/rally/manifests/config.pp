@@ -1,25 +1,24 @@
 class rally::config inherits rally {
 
-  $rally_config = "${rally::rally_home}/existing.json"
+  $rally_config = "/etc/rally/deployment/existing.json"
   $rally_deployment = 'existing'
 
-  $rally_hostname = hiera("rally::public_hostname")
-  $rally_vip = hiera("rally::public_vip")
-
-  host { "${rally_hostname}":
+  host { "${rally::public_hostname}":
     ensure => present,
-    ip     => $rally_vip,
+    ip     => $rally::public_vip,
   }
 
+  file {"deployment":
+    ensure  => directory,
+    path    => "/etc/rally/deployment"
+  } ->
   file { "${rally_config}":
     ensure  => file,
     content => template('rally/existing.json.erb'),
-    owner   => $rally::rally_user,
-    group   => $rally::rally_group,
     mode    => '0644',
   }
 
-  $cmd = "${rally::rally_venv}/bin/rally deployment create \
+  $cmd = "/usr/local/bin/rally deployment create \
     --file=${rally_config} \
     --name ${rally_deployment}"
 
@@ -30,12 +29,10 @@ class rally::config inherits rally {
       '/sbin',
       '/usr/bin',
       '/usr/sbin',
-      "${rally::rally_venv}/bin",
+      '/usr/local/bin',
     ],
-    user    => $rally::rally_user,
-    cwd     => $rally::rally_home,
     require => File[$rally_config],
-    unless  => "${rally::rally_venv}/bin/rally deployment show \
+    unless  => "/usr/local/bin/rally deployment show \
       --deployment ${rally_deployment}",
   }
 }

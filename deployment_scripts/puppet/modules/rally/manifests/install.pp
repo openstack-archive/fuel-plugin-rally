@@ -1,11 +1,12 @@
 class rally::install inherits rally {
 
   $rally_installer = '/tmp/install_rally.sh'
+  $rally_requirements = '/tmp/rally_requirements.txt'
 
   $cmd = "${rally_installer} \
     --yes \
     --no-color \
-    --target ${rally::rally_venv} \
+    --system \
     --url ${rally::repository_url} \
     --branch ${rally::repository_tag}"
 
@@ -14,6 +15,13 @@ class rally::install inherits rally {
     mode   => '0755',
     source => 'puppet:///modules/rally/install_rally.sh',
     before => Exec[$rally_installer],
+  }
+
+  file { "${rally_requirements}":
+    ensure => file,
+    mode   => '0755',
+    source => 'puppet:///modules/rally/requirements.txt',
+    before => Exec["update_requirements"],
   }
 
   $packages = {
@@ -32,22 +40,17 @@ class rally::install inherits rally {
   }
   create_resources(package, $packages, $defaults)
 
-  if $rally::create_user == true and $rally::rally_user != 'root' {
-    user { "${rally::rally_user}":
-      ensure     => present,
-      managehome => true,
-      home       => $rally::rally_home,
-      shell      => '/bin/bash',
-      before     => Exec[$rally_installer],
-    }
+  exec {"update_requirements":
+    command => "cat $rally_requirements | xargs pip install",
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
+    timeout => 500,
   }
 
   exec { "${rally_installer}":
     command => $cmd,
-    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-    user    => $rally::rally_user,
-    cwd     => $rally::rally_home,
+    path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
     timeout => 500,
-    unless  => "test -x ${rally::rally_venv}/bin/rally",
+    require => Exec["update_requirements"],
+    unless  => "test -x /usr/local/bin/rally",
   }
 }
