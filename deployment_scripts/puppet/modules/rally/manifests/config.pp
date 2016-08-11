@@ -6,6 +6,8 @@ class rally::config inherits rally {
   $rally_hostname = hiera("rally::public_hostname")
   $rally_vip = hiera("rally::public_vip")
 
+  $fuel_version = hiera("fuel_version")
+
   host { "${rally_hostname}":
     ensure => present,
     ip     => $rally_vip,
@@ -27,11 +29,12 @@ class rally::config inherits rally {
     --file=${rally_config} \
     --name ${rally_deployment}"
 
-  exec { "pip_packages_upgrade":
+  exec { "dependencies_upgrade":
     command => "pip install --upgrade 'python-keystoneclient>=2.0.0'",
     path    => ["/usr/bin", "/usr/sbin"],
     timeout => 100,
-    before  => Exec["register_deployment"]
+    before  => Exec["register_deployment"],
+    onlyif  => 'test "$fuel_version" = "8.0"',
   }
 
   exec { 'register_deployment':
