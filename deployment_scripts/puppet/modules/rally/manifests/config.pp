@@ -1,6 +1,6 @@
 class rally::config inherits rally {
 
-  $rally_config = "/etc/rally/deployment/existing.json"
+  $rally_config = '/etc/rally/deployment/existing.json'
   $rally_deployment = 'existing'
 
   host { "${rally::public_hostname}":
@@ -8,9 +8,9 @@ class rally::config inherits rally {
     ip     => $rally::public_vip,
   }
 
-  file {"deployment":
+  file { 'deployment':
     ensure  => directory,
-    path    => "/etc/rally/deployment"
+    path    => '/etc/rally/deployment'
   } ->
   file { "${rally_config}":
     ensure  => file,
