@@ -54,7 +54,7 @@ rally::password: <%= @password %>
 rally::tenant_name: <%= @tenant_name %>
 ')
 
-  file { "/etc/hiera/plugins":
+  file { '/etc/hiera/plugins':
     ensure => 'directory',
   } ->
   file { "${hiera_file}":

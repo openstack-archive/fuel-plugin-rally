@@ -36,6 +36,6 @@ class rally::install inherits rally {
     command => $cmd,
     path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin'],
     timeout => 500,
-    unless  => "test -x /usr/local/bin/rally",
+    unless  => 'test -x /usr/local/bin/rally',
   }
 }
