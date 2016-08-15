@@ -1,3 +1,11 @@
+# == Class: rally
+#
+# Install and configure a Rally node
+#
+# === Parameters
+#
+# See below for a complete list of parameters accepted.
+
 class rally (
   $repository_url  = $rally::params::repository_url,
   $repository_tag  = $rally::params::repository_tag,

@@ -1,3 +1,7 @@
+# == Class: rally::install
+#
+# Install rally and all it's dependencies
+
 class rally::install inherits rally {
 
   $rally_installer = '/tmp/install_rally.sh'

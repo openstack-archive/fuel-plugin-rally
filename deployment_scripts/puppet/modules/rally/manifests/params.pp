@@ -1,3 +1,7 @@
+# Class: rally::params
+#
+# This class configures parameters for the puppet rally module.
+
 class rally::params {
   $repository_url  = 'https://github.com/openstack/rally'
   $repository_tag  = 'master'

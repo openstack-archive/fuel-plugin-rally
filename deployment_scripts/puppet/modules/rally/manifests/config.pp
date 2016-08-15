@@ -1,3 +1,7 @@
+# Class: rally::config
+#
+# This class configures rally tool and creates existing deployment
+
 class rally::config inherits rally {
 
   $rally_config = '/etc/rally/rally.conf'
