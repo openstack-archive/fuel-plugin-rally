@@ -1,7 +1,8 @@
 class rally::config inherits rally {
 
-  $rally_config = '/etc/rally/deployment/existing.json'
+  $rally_config = '/etc/rally/rally.conf'
   $rally_deployment = 'existing'
+  $rally_deployment_config = '/etc/rally/deployment/existing.json'
 
   $rally_hostname = hiera('rally::public_hostname')
   $rally_vip = hiera('rally::public_vip')
@@ -13,11 +14,47 @@ class rally::config inherits rally {
     ip     => $rally_vip,
   }
 
+  define rally_deployment_configuration($rally_config, $key, $value) {
+    augeas { "${rally_config}_${key}":
+      lens    => "Puppet.lns",
+      incl    => "${rally_config}",
+      context => "/files/${rally_config}/DEFAULT/",
+      onlyif  => "get $key != '$value'",
+      changes => [
+        "ins $key after #comment[. =~ regexp('$key = .*')]",
+        "set $key $value",
+      ],
+    }
+  }
+
+  $rally_deployment_config_values = {
+
+    verbose => {
+      key   => 'verbose',
+      value => 'true',
+    },
+    log_dir => {
+      key   => 'log_dir',
+      value => '/var/log/rally/' },
+  }
+
+  $defaults = {
+    rally_config => $rally_config,
+    before       => Exec['register_deployment'],
+  }
+
+  create_resources(rally_deployment_configuration, $rally_deployment_config_values, $defaults)
+
+  file { "$rally_deployment_config_values['log_dir']['key']":
+    ensure => directory,
+    path   => $rally_deployment_config_values['log_dir']['value'],
+  }
+
   file {'deployment':
     ensure  => directory,
     path    => '/etc/rally/deployment'
   } ->
-  file { "${rally_config}":
+  file { "${rally_deployment_config}":
     ensure  => file,
     content => template('rally/existing.json.erb'),
     owner   => $rally::rally_user,
@@ -26,7 +63,7 @@ class rally::config inherits rally {
   }
 
   $cmd = "/usr/local/bin/rally deployment create \
-    --file=${rally_config} \
+    --file=${rally_deployment_config} \
     --name ${rally_deployment}"
 
   exec { 'dependencies_upgrade':
@@ -48,7 +85,7 @@ class rally::config inherits rally {
     ],
     user    => $rally::rally_user,
     cwd     => $rally::rally_home,
-    require => File[$rally_config],
+    require => File[$rally_deployment_config],
     unless  => "/usr/local/bin/rally deployment show \
       --deployment ${rally_deployment}",
   }
