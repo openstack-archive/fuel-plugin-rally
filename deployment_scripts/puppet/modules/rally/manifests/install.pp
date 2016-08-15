@@ -33,6 +33,7 @@ class rally::install inherits rally {
     'libpq-dev'    => {},
     'git'          => {},
     'python-pip'   => {},
+    'augeas-tools' => {},
   }
   $defaults = {
     ensure => installed,
