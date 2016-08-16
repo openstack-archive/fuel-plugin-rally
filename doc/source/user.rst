@@ -15,7 +15,7 @@ To configure your plugin, you need to follow these steps:
 
 #. Click on the Settings tab of the Fuel web UI.
 
-#. Scroll down the page and select the Rally in the left column.
+#. Selecto Other item on the left menu and find Rally plugins listing.
 
 4. Select the Rally Plugin checkbox and fill-in the required fields.
 
