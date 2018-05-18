@@ -111,4 +111,4 @@ Dependencies
 References
 ==========
 
-.. [#] https://wiki.openstack.org/wiki/Rally
+.. [#] https://rally.readthedocs.io/en/latest/
